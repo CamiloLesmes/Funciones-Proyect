@@ -1,0 +1,20 @@
+Delimiter //
+CREATE FUNCTION ObtenerFacturaVenta(venta_id INT)
+RETURNS TEXT
+BEGIN
+     DECLARE factura TEXT;
+SELECT
+    CONCAT('Factura de venta #', v.id,  '\n,
+        'Fecha: ', DATE_FORMAT(v.fecha, '%Y-%n-%d %H:%i:%s'), '\n',
+        'Cliente: ', c.nombre, '\n\n',
+    GROUP_CONCAT(p.nombre, ': $', p.precio SEPARADOR '\n'), '\n', 
+        'Total: $' , SUN(p.precio)) INTO factura
+FROM ventas v
+JOIN clientes c ON v.clientes_id = c.id
+JOIN detalle_venta dv ON v.id = dv.venta_id
+JOIN productos p ON dv.producto_id = p.id
+WHERE v.id = venta_id;
+
+RETURN factura;
+
+END //
